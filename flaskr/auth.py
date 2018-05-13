@@ -24,6 +24,7 @@ def register() :
         elif db.execute('SELECT id FROM user WHERE username=?', (username,)).fetchone() is not None :
             error = 'User {} is already registered.'.format(username)
         else :
+            db.execute('INSERT INTO user(username, password) VALUES (?, ?)', (username, generate_password_hash(password),))
             db.commit()
             return redirect(url_for('auth.login'))
 
@@ -41,7 +42,7 @@ def login() :
 
         user = db.execute(
             'SELECT * FROM user WHERE username = ?', (username,)
-        )
+        ).fetchone()
 
         if user is None :
             error = 'Incorrect username.'
@@ -73,7 +74,7 @@ def logout() :
     return redirect(url_for('index'))
 
 def login_required(view) :
-    @funtools.wraps(view)
+    @functools.wraps(view)
     def wrapped_view(**kwargs) :
         if g.user is None :
             return redirect(url_for('auth.login'))

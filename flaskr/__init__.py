@@ -38,6 +38,7 @@ def create_app(test_config=None) :
     # has no url_prefix so, blog will be main feature of Flaskr
     from . import blog
     app.register_blueprint(blog.bp)
+    # blog.index => index
     app.add_url_rule('/', endpoint='index')
 
     return app
